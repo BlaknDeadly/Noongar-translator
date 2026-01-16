@@ -135,12 +135,12 @@
 
         <div class="search-row">
           <input id="noongarInput" placeholder="Search Noongar → English" />
-          <button type="button" onclick="searchNoongar()">Search</button>
+          <button onclick="searchNoongar()">Search</button>
         </div>
 
         <div class="search-row" style="margin-top:0.4rem;">
           <input id="englishInput" placeholder="Search English → Noongar" />
-          <button type="button" onclick="searchEnglish()">Search</button>
+          <button onclick="searchEnglish()">Search</button>
         </div>
 
         <div id="results" class="results">
@@ -153,7 +153,7 @@
         <h2>About Noongar language</h2>
         <p class="ack-text">
           This small helper draws on the Noongar language work of Elders and community,
-          including published resources such as the Noongar Dictionary (Second Edition, 1997).[web:338]
+          including published resources such as the Noongar Dictionary (Second Edition, 1997).[file:7][file:11]
         </p>
 
         <h2>Acknowledgement</h2>
@@ -192,38 +192,37 @@
       "family": "moort"
     };
 
-    function showMessage(message) {
-      const el = document.getElementById("results");
-      el.innerHTML = message;
-    }
-
     function searchNoongar() {
-      const input = document.getElementById("noongarInput");
-      const term = input.value.trim().toLowerCase();
+      const term = document.getElementById("noongarInput").value.trim().toLowerCase();
+      const el = document.getElementById("results");
+
       if (!term) {
-        showMessage("<em>Please type a Noongar word to search.</em>");
+        el.innerHTML = "<em>Please type a Noongar word to search.</em>";
         return;
       }
+
       const meaning = noongarToEnglish[term];
       if (meaning) {
-        showMessage(`<strong>${term}</strong> → ${meaning}`);
+        el.textContent = term + " → " + meaning;
       } else {
-        showMessage(`No result found for "<strong>${term}</strong>" in the sample data.`);
+        el.textContent = "No result found for \"" + term + "\" in the sample data.";
       }
     }
 
     function searchEnglish() {
-      const input = document.getElementById("englishInput");
-      const term = input.value.trim().toLowerCase();
+      const term = document.getElementById("englishInput").value.trim().toLowerCase();
+      const el = document.getElementById("results");
+
       if (!term) {
-        showMessage("<em>Please type an English word to search.</em>");
+        el.innerHTML = "<em>Please type an English word to search.</em>";
         return;
       }
+
       const word = englishToNoongar[term];
       if (word) {
-        showMessage(`<strong>${term}</strong> → ${word}`);
+        el.textContent = term + " → " + word;
       } else {
-        showMessage(`No result found for "<strong>${term}</strong>" in the sample data.`);
+        el.textContent = "No result found for \"" + term + "\" in the sample data.";
       }
     }
   </script>
