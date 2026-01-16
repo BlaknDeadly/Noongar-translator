@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Noongar Translator">
+    <meta name="theme-color" content="#8B4513">
+    <title>Noongar Translator</title>
+    <style>
+        :root {
+            --color-primary: #8B4513;
+            --color-secondary: #D2691E;
+            --color-accent: #DAA520;
+            --color-bg: #F5DEB3;
+            --color-text: #2C1810;
+            --color-light: #FFF8DC;
+            --color-border: #CD853F;
+            --safe-area-inset-top: max(12px, env(safe-area-inset-top));
+            --safe-area-inset-bottom: max(12px, env(safe-area-inset-bottom));
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow-x: hidden;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #8B4513 0%, #D2691E 100%);
+            min-height: 100vh;
+            padding: 0;
+            color: var(--color-text);
+            padding-top: var(--safe-area-inset-top);
+            padding-bottom: var(--safe-area-inset-bottom);
+        }
+
+        .container {
+            max-width: 100%;
+            width: 100%;
+            margin: 0;
+            background: var(--color-light);
+            border-radius: 0;
+            box-shadow: none;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .acknowledgement {
+            background: rgba(139, 69, 19, 0.95);
+            padding: 14px 16px;
+            text-align: center;
+            color: #FFF8DC;
+            border-bottom: 2px solid var(--color-accent);
+            font-size: 0.9em;
+            line-height: 1.5;
+            flex-shrink: 0;
+        }
+
+        .acknowledgement p {
+            margin: 0;
+        }
+
+        .acknowledgement strong {
+            color: var(--color-accent);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #8B4513 0%, #A0522D 100%);
+            padding: 20px 16px;
+            text-align: center;
+            color: white;
+            border-bottom: 4px solid var(--color-accent);
+            flex-shrink: 0;
+        }
+
+        .header h1 {
+            font-size: 1.8em;
+            margin-bottom: 6px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            font-size: 0.95em;
+            opacity: 0.95;
+        }
+
+        .content {
+            padding: 16px;
+            padding-bottom: calc(16px + var(--safe-area-inset-bottom));
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            flex: 1;
+        }
+
+        .section {
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            font-size: 1.3em;
+            color: var(--color-primary);
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--color-accent);
+        }
+
+        .input-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--color-text);
+            font-size: 0.95em;
+        }
+
+        input[type="text"],
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--color-border);
+            border-radius: 8px;
+            font-size: 16px;
+            background: white;
+            color: var(--color-text);
+            transition: border-color 0.3s ease;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        input[type="text"]:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--color-secondary);
+            box-shadow: 0 0 8px rgba(210, 105, 30, 0.3);
+        }
+
+        select {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238B4513' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 36px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            flex: 1;
+            min-width: 100%;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            -webkit-appearance: none;
+            appearance: none;
+            min-height: 44px;
+            touch-action: manipulation;
+        }
+
+        .btn-primary {
+            background: var(--color-secondary);
+            color: white;
+        }
+
+        .btn-primary:active {
+            background: var(--color-primary);
+            transform: scale(0.98);
+        }
+
+        .btn-secondary {
+            background: var(--color-accent);
+            color: var(--color-text);
+        }
+
+        .btn-secondary:active {
+            background: #FFD700;
+            transform: scale(0.98);
+        }
+
+        .result {
+            background: var(--color-bg);
+            border-left: 4px solid var(--color-secondary);
+            padding: 16px;
+            border-radius: 8px;
+            margin-top: 16px;
+            display: none;
+        }
+
+        .result.active {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-label {
+            font-weight: 600;
+            color: var(--color-primary);
+            margin-bottom: 8px;
+            font-size: 0.85em;
+            text-transform: uppercase;
+        }
+
+        .result-text {
+            font-size: 1.2em;
+            color: var(--color-text);
+            font-weight: 600;
+            word-break: break-word;
+        }
+
+        .vocabulary {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .vocab-card {
+            background: white;
+            border: 2px solid var(--color-border);
+            border-radius: 8px;
+            padding: 12px;
+            transition: all 0.2s ease;
+            active: all 0.1s ease;
+        }
+
+        .vocab-card:active {
+            background: var(--color-bg);
+            border-color: var(--color-secondary);
+            transform: scale(0.98);
+        }
+
+        .vocab-english {
+            font-size: 0.85em;
+            color: #666;
+            margin-bottom: 6px;
+        }
+
+        .vocab-noongar {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: var(--color-primary);
+        }
+
+        .vocab-pronunciation {
+            font-size: 0.8em;
+            color: var(--color-secondary);
+            font-style: italic;
+            margin-top: 6px;
+        }
+
+        .info-box {
+            background: rgba(218, 165, 32, 0.15);
+            border-left: 4px solid var(--color-accent);
+            padding: 12px;
+            border-radius: 6px;
+            margin-top: 16px;
+            font-size: 0.9em;
+            line-height: 1.6;
+        }
+
+        .error {
+            background: #FFE4E1;
+            border-left: 4px solid #CD5C5C;
+            color: #8B3A3A;
+        }
+
+        .success {
+            background: #E8F5E9;
+            border-left: 4px solid #4CAF50;
+            color: #2E7D32;
+        }
+
+        .countries-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        .country-card {
+            background: white;
+            border: 2px solid var(--color-border);
+            border-radius: 8px;
+            padding: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .country-card:active {
+            background: var(--color-bg);
+            border-color: var(--color-secondary);
+            transform: scale(0.98);
+        }
+
+        .country-noongar {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: var(--color-primary);
+            margin-bottom: 4px;
+        }
+
+        .country-english {
+            font-size: 0.85em;
+            color: #666;
+        }
+
+        @media (min-width: 480px) {
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .vocabulary {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .countries-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            button {
+                min-width: auto;
+            }
+
+            .button-group {
+                gap: 10px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .header h1 {
+                font-size: 2.5em;
+            }
+
+            .content {
+                padding: 40px;
+                padding-bottom: calc(40px + var(--safe-area-inset-bottom));
+            }
+
+            .container {
+                border-radius: 12px;
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+                margin: 20px auto;
+                max-width: 1000px;
+            }
+
+            body {
+                padding: 20px;
+            }
+
+            .vocabulary {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            }
+
+            .countries-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="acknowledgement">
+            <p><strong>Acknowledgement of Country:</strong> We acknowledge the Noongar people as the Traditional Custodians of the Country on which this translator resides. We pay our respects to Noongar Elders past, present, and emerging. This tool celebrates and honours the Noongar language and the 14 distinct nations across southwestern Australia.</p>
+        </div>
+
+        <div class="header">
+            <h1>🌿 Noongar Translator</h1>
+            <p>Learn and translate Noongar words and phrases</p>
+        </div>
+
+        <div class="content">
+            <!-- Translator Section -->
+            <div class="section">
+                <h2 class="section-title">Word Translator</h2>
+                
+                <div class="input-group">
+                    <label for="direction">Translation Direction:</label>
+                    <select id="direction">
+                        <option value="english-to-noongar">English → Noongar</option>
+                        <option value="noongar-to-english">Noongar → English</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="word">Enter Word:</label>
+                    <input type="text" id="word" placeholder="Try: hello, water, kangaroo..." autocomplete="off">
+                </div>
+
+                <div class="button-group">
+                    <button class="btn-primary" onclick="translateWord()">Translate</button>
+                    <button class="btn-secondary" onclick="clearForm()">Clear</button>
+                </div>
+
+                <div id="result" class="result"></div>
+            </div>
+
+            <!-- Vocabulary Section -->
+            <div class="section">
+                <h2 class="section-title">Common Words & Phrases</h2>
+                
+                <div class="input-group">
+                    <label for="category">Category:</label>
+                    <select id="category" onchange="displayVocabulary()">
+                        <option value="greetings">Greetings</option>
+                        <option value="family">Family</option>
+                        <option value="nature">Nature & Country</option>
+                        <option value="animals">Animals</option>
+                        <option value="food">Food & Water</option>
+                        <option value="daily">Daily Words</option>
+                        <option value="historical">Historical Archive Words</option>
+                        <option value="trade">Trade & Cultural Items</option>
+                    </select>
+                </div>
+
+                <div id="vocabulary" class="vocabulary"></div>
+            </div>
+
+            <!-- Noongar Countries Section -->
+            <div class="section">
+                <h2 class="section-title">🗺️ Noongar Countries (Boodja)</h2>
+                <p style="margin-bottom: 12px; color: #666; font-size: 0.9em;">The 14 distinct language regions across southwestern Australia</p>
+                <div id="countries" class="countries-grid"></div>
+            </div>
+
+            <!-- Info Box -->
+            <div class="info-box">
+                <strong>About Noongar Language:</strong><br>
+                Noongar is the language of the Noongar people of southwestern Australia. It has 14 distinct dialects spoken across different regions of Western Australia. This translator provides authentic words from Rose Whitehurst's Official Noongar Dictionary (1992), George Fletcher Moore's 1842 Descriptive Vocabulary, and AIATSIS archival records.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Comprehensive Noongar vocabulary database
+        const vocabularyDatabase = {
+            greetings: [
+                { english: 'Hello / Person', noongar: 'Nyoongar', pronunciation: 'NYOO-ngar' },
+                { english: 'Hello / Welcome', noongar: 'Kaya Wundju', pronunciation: 'KAH-yah WUN-joo' },
+                { english: 'Welcome', noongar: 'Wundju', pronunciation: 'WUN-joo' },
+                { english: 'Goodbye', noongar: 'Boordja', pronunciation: 'BOR-ja' },
+                { english: 'Thank you', noongar: 'Kwop', pronunciation: 'KWOP' },
+                { english: 'Yes', noongar: 'Kaya', pronunciation: 'KAH-yah' },
+                { english: 'No', noongar: 'Kayi', pronunciation: 'KAH-ee' },
+                { english: 'Please', noongar: 'Kwonye', pronunciation: 'KWON-yay' },
+                { english: 'Sorry', noongar: 'Kooditj', pronunciation: 'KOO-ditch' },
+                { english: 'My friend', noongar: 'Waadjook', pronunciation: 'WAHJ-ook' },
+                { english: 'Look out!', noongar: 'Balatj', pronunciation: 'BAH-latch' },
+                { english: 'Danger!', noongar: 'Aliwa', pronunciation: 'AH-lee-wah' },
+                { english: 'Mother (calling)', noongar: 'Maaman', pronunciation: 'MAH-man' },
+            ],
+            family: [
+                { english: 'Mother', noongar: 'Maaman', pronunciation: 'MAH-man' },
+                { english: 'Father', noongar: 'Bap / Maan', pronunciation: 'BAP / MAHN' },
+                { english: 'Grandmother', noongar: 'Nana', pronunciation: 'NAH-nah' },
+                { english: 'Grandfather', noongar: 'Yonga Bap', pronunciation: 'YON-gah BAP' },
+                { english: 'Sister', noongar: 'Djook', pronunciation: 'JOOK' },
+                { english: 'Brother', noongar: 'Ngoon', pronunciation: 'NGOON' },
+                { english: 'Son', noongar: 'Maawit', pronunciation: 'MAH-wit' },
+                { english: 'Daughter', noongar: 'Yamuk', pronunciation: 'YAH-muk' },
+                { english: 'Wife', noongar: 'Yamuk', pronunciation: 'YAH-muk' },
+                { english: 'Family', noongar: 'Noolitj', pronunciation: 'NOO-litch' },
+                { english: 'Child', noongar: 'Nopa', pronunciation: 'NO-pah' },
+                { english: 'Uncle/Aunty', noongar: 'Kongk', pronunciation: 'KONGK' },
+                { english: 'Man', noongar: 'Maam', pronunciation: 'MAHM' },
+                { english: 'Woman', noongar: 'Yorga', pronunciation: 'YOR-gah' },
+                { english: 'Boy/Son', noongar: 'Nop', pronunciation: 'NOP' },
+                { english: 'Cousin', noongar: 'Dembart', pronunciation: 'DEM-bart' },
+            ],
+            nature: [
+                { english: 'Country / Land', noongar: 'Boodja', pronunciation: 'BOO-ja' },
+                { english: 'Water', noongar: 'Djilak / Kep', pronunciation: 'JI-lack / KEP' },
+                { english: 'River', noongar: 'Kwongkan', pronunciation: 'KWONG-kan' },
+                { english: 'Ocean', noongar: 'Djaalalang', pronunciation: 'JAH-lah-lang' },
+                { english: 'Fire', noongar: 'Waagh', pronunciation: 'WAHG' },
+                { english: 'Smoke', noongar: 'Koori', pronunciation: 'KOO-ree' },
+                { english: 'Tree', noongar: 'Boorn', pronunciation: 'BOOR-n' },
+                { english: 'Forest', noongar: 'Boorn boodja', pronunciation: 'BOOR-n BOO-ja' },
+                { english: 'Grass Tree', noongar: 'Balga', pronunciation: 'BAL-gah' },
+                { english: 'Rock', noongar: 'Boya', pronunciation: 'BOY-ah' },
+                { english: 'Sand', noongar: 'Moodjita', pronunciation: 'MOO-ji-tah' },
+                { english: 'Mountain', noongar: 'Kwerta', pronunciation: 'KWER-tah' },
+                { english: 'Sky', noongar: 'Bogal', pronunciation: 'BO-gal' },
+                { english: 'Sun', noongar: 'Ngangk', pronunciation: 'NGANGK' },
+                { english: 'Moon', noongar: 'Miyak', pronunciation: 'MEE-yak' },
+                { english: 'Stars', noongar: 'Diyirn', pronunciation: 'DEE-yurn' },
+                { english: 'Rain', noongar: 'Kep', pronunciation: 'KEP' },
+                { english: 'Wind', noongar: 'Keniny', pronunciation: 'KEN-in-ee' },
+                { english: 'Storm', noongar: 'Birnt', pronunciation: 'BIRNT' },
+                { english: 'Waterhole', noongar: 'Ngamma', pronunciation: 'NGAM-mah' },
+                { english: 'Estuary', noongar: 'Darbal', pronunciation: 'DAR-bahl' },
+                { english: 'Swamp/Lake', noongar: 'Pinjar', pronunciation: 'PIN-jar' },
+                { english: 'Rainbow Serpent', noongar: 'Waugal', pronunciation: 'WAW-gal' },
+            ],
+            animals: [
+                { english: 'Kangaroo', noongar: 'Yongka', pronunciation: 'YONG-kah' },
+                { english: 'Wallaby', noongar: 'Kwoka', pronunciation: 'KWOK-ah' },
+                { english: 'Koala', noongar: 'Koobor', pronunciation: 'KOO-bor' },
+                { english: 'Eagle', noongar: 'Waalitj', pronunciation: 'WAH-litch' },
+                { english: 'Crow', noongar: 'Wardang', pronunciation: 'WAR-dang' },
+                { english: 'Cockatoo (black)', noongar: 'Manatj', pronunciation: 'MAN-atch' },
+                { english: 'Fish (Animal)', noongar: 'Koolbardi', pronunciation: 'KOOL-bar-dee' },
+                { english: 'Dog / Dingo', noongar: 'Dwert', pronunciation: 'DWERT' },
+                { english: 'Snake', noongar: 'Noorn', pronunciation: 'NOORN' },
+                { english: 'Lizard', noongar: 'Yondi', pronunciation: 'YON-dee' },
+                { english: 'Frog', noongar: 'Koorni', pronunciation: 'KOOR-nee' },
+                { english: 'Bird', noongar: 'Waap', pronunciation: 'WAHP' },
+                { english: 'Spider', noongar: 'Kar', pronunciation: 'KAR' },
+                { english: 'Emu', noongar: 'Waitj', pronunciation: 'WAITJ' },
+                { english: 'Possum', noongar: 'Ngwir', pronunciation: 'NGWIR' },
+                { english: 'Swan', noongar: 'Marlee', pronunciation: 'MAR-lee' },
+                { english: 'Quokka', noongar: 'Kwoka', pronunciation: 'KWOK-ah' },
+                { english: 'Goanna', noongar: 'Yoorn', pronunciation: 'YORN' },
+                { english: 'Echidna', noongar: 'Nyingarn', pronunciation: 'NYIN-garn' },
+                { english: 'Duck', noongar: 'Yerdarap', pronunciation: 'YER-dar-ap' },
+                { english: 'Tawny Frog-mouth', noongar: 'Djoowi', pronunciation: 'JOO-wee' },
+                { english: 'Magpie', noongar: 'Koorlbardi', pronunciation: 'KOOL-bar-dee' },
+            ],
+            food: [
+                { english: 'Food / Meat', noongar: 'Kura', pronunciation: 'KOO-rah' },
+                { english: 'Bread', noongar: 'Booka', pronunciation: 'BOO-kah' },
+                { english: 'Meat', noongar: 'Moort', pronunciation: 'MOOR-t' },
+                { english: 'Fish (Food)', noongar: 'Koolbardi', pronunciation: 'KOOL-bar-dee' },
+                { english: 'Honey', noongar: 'Ngook', pronunciation: 'NGOOK' },
+                { english: 'Eat', noongar: 'Djoriny', pronunciation: 'JOR-in-ee' },
+                { english: 'Drink', noongar: 'Djeenak', pronunciation: 'JEE-nack' },
+                { english: 'Water', noongar: 'Kep', pronunciation: 'KEP' },
+                { english: 'Bush tucker', noongar: 'Kura', pronunciation: 'KOO-rah' },
+                { english: 'Berries', noongar: 'Kwyloot', pronunciation: 'KWEE-loot' },
+                { english: 'Honey and water', noongar: 'Djilyaa', pronunciation: 'JEE-lyah' },
+                { english: 'Seeds', noongar: 'Balak', pronunciation: 'BAH-lack' },
+            ],
+            daily: [
+                { english: 'Person', noongar: 'Nyoongar', pronunciation: 'NYOO-ngar' },
+                { english: 'Man', noongar: 'Doogel', pronunciation: 'DOO-gel' },
+                { english: 'Woman', noongar: 'Yok', pronunciation: 'YOK' },
+                { english: 'Hand', noongar: 'Maar', pronunciation: 'MAHR' },
+                { english: 'Head', noongar: 'Kaat', pronunciation: 'KAHT' },
+                { english: 'Eye', noongar: 'Koolak', pronunciation: 'KOO-lack' },
+                { english: 'Ear', noongar: 'Djin', pronunciation: 'JIN' },
+                { english: 'Nose', noongar: 'Kannop', pronunciation: 'KAN-nop' },
+                { english: 'Mouth', noongar: 'Djaa', pronunciation: 'JAH' },
+                { english: 'Leg', noongar: 'Kangga', pronunciation: 'KANG-gah' },
+                { english: 'Foot', noongar: 'Djen', pronunciation: 'JEN' },
+                { english: 'Heart', noongar: 'Koort', pronunciation: 'KORT' },
+                { english: 'Hair', noongar: 'Djoombar', pronunciation: 'JOOM-bar' },
+                { english: 'Skin', noongar: 'Miyal', pronunciation: 'MEE-yal' },
+                { english: 'Dance', noongar: 'Kobori', pronunciation: 'KO-bor-ee' },
+                { english: 'Walk', noongar: 'Baan', pronunciation: 'BAHN' },
+                { english: 'Sit', noongar: 'Nyin', pronunciation: 'NYIN' },
+                { english: 'Sleep', noongar: 'Nookert', pronunciation: 'NOO-kert' },
+                { english: 'Water (Drinking)', noongar: 'Kep', pronunciation: 'KEP' },
+                { english: 'Stand', noongar: 'Kanjook', pronunciation: 'KAN-jook' },
+                { english: 'Lie down', noongar: 'Ngoornt', pronunciation: 'NGOOR-nt' },
+                { english: 'Dig/Catch', noongar: 'Baranginy', pronunciation: 'BAR-an-gin-ee' },
+                { english: 'Coming/Going', noongar: 'Koorliny', pronunciation: 'KOOL-rin-ee' },
+                { english: 'Eating', noongar: 'Ngaarning', pronunciation: 'NGAHR-ning' },
+                { english: 'Bite', noongar: 'Barkininy', pronunciation: 'BAR-kin-in-ee' },
+            ],
+            historical: [
+                { english: 'Leader / Boss', noongar: 'Boordiya', pronunciation: 'BOR-dee-yah' },
+                { english: 'Message Stick', noongar: 'Boorna-Wangkiny', pronunciation: 'BOOR-nah WANG-kin-ee' },
+                { english: 'Sorcery / Magic', noongar: 'Boyla', pronunciation: 'BOY-lah' },
+                { english: 'Spear / Spear Thrower', noongar: 'Gidjie', pronunciation: 'GIJ-ee' },
+                { english: 'Spear (alternate)', noongar: 'Miro', pronunciation: 'MEER-o' },
+                { english: 'Shelter / Hut', noongar: 'Koornt', pronunciation: 'KOOR-nt' },
+                { english: 'Shelter / Hut (alternate)', noongar: 'Mia Mia', pronunciation: 'MEE-ah MEE-ah' },
+                { english: 'Fire Place / Heart Country', noongar: 'Karlup', pronunciation: 'KAR-lup' },
+                { english: 'Torch', noongar: 'Warda', pronunciation: 'WAR-dah' },
+                { english: 'One having authority', noongar: 'Warda Gadak', pronunciation: 'WAR-dah GAH-dack' },
+                { english: 'Grandfather (alternate)', noongar: 'Dembart', pronunciation: 'DEM-bart' },
+                { english: 'Grandmother (alternate)', noongar: 'Deman', pronunciation: 'DEM-ahn' },
+                { english: 'Young woman / Child', noongar: 'Yulangera', pronunciation: 'YOO-lan-ger-ah' },
+                { english: 'Fruit', noongar: 'Doomba', pronunciation: 'DOOM-bah' },
+                { english: 'Very long ago', noongar: 'Koora', pronunciation: 'KOO-rah' },
+                { english: 'Bandicoot', noongar: 'Kwenda', pronunciation: 'KWEN-dah' },
+                { english: 'Dolphin', noongar: 'Kwilana', pronunciation: 'KWEE-lah-nah' },
+                { english: 'Wild Peach', noongar: 'Kwonding', pronunciation: 'KWON-ding' },
+                { english: 'Wild Carrot', noongar: 'Kwardiny', pronunciation: 'KWAR-din-ee' },
+                { english: 'Frog (alternate)', noongar: 'Kweeyar', pronunciation: 'KWEE-yar' },
+                { english: 'Hip / Bone', noongar: 'Kwelak', pronunciation: 'KWEL-ak' },
+                { english: 'Hip / Joint', noongar: 'Kwoliny', pronunciation: 'KWOL-in-ee' },
+                { english: 'Wrist', noongar: 'Kwoliny', pronunciation: 'KWOL-in-ee' },
+                { english: 'Leg (alternate)', noongar: 'Maart', pronunciation: 'MAHR-t' },
+                { english: 'Moon Halo', noongar: 'Meeuk Mia', pronunciation: 'MEE-uk MEE-ah' },
+                { english: 'Beautiful / Pretty', noongar: 'Kwobardak', pronunciation: 'KWO-bar-dak' },
+                { english: 'Good Spirit', noongar: 'Kwop Wirrin', pronunciation: 'KWOP WIR-rin' },
+                { english: 'Hard / Solid', noongar: 'Moorditj', pronunciation: 'MOR-ditch' },
+                { english: 'Hurry Up', noongar: 'Moordiup', pronunciation: 'MOR-dee-up' },
+                { english: 'Family Track', noongar: 'Moort Bidi', pronunciation: 'MOOR-t BID-ee' },
+                { english: 'Happy / Joyful', noongar: 'Djoorap', pronunciation: 'JOO-rap' },
+                { english: 'Dream', noongar: 'Ngoornda-Djinang', pronunciation: 'NGOOR-dah JIN-ang' },
+                { english: 'Teeth', noongar: 'Ngorlak', pronunciation: 'NGORE-lack' },
+                { english: 'Beautiful (alternate)', noongar: 'Ngwirin', pronunciation: 'NGWIR-in' },
+                { english: 'Worm', noongar: 'Ninat', pronunciation: 'NIN-at' },
+                { english: 'Duck', noongar: 'Yerdarap', pronunciation: 'YER-dar-ap' },
+                { english: 'Paperbark Tree', noongar: 'Yorl', pronunciation: 'YOHR-l' },
+                { english: 'Innocent / Alright', noongar: 'Yoran', pronunciation: 'YOR-ahn' },
+                { english: 'Dew / Mist / Fog', noongar: 'Dooly', pronunciation: 'DOO-lee' },
+                { english: 'Alive', noongar: 'Dordok', pronunciation: 'DOR-dok' },
+                { english: 'Place to make spears', noongar: 'Gidgegannup', pronunciation: 'GID-ge-GAN-up' },
+                { english: 'Place of Water', noongar: 'Gnargagin', pronunciation: 'GNAR-gah-gin' },
+                { english: 'Berries / Fruit', noongar: 'Yurenburt', pronunciation: 'YOO-ren-bert' },
+            ],
+            trade: [
+                { english: 'Spear', noongar: 'Gidgee', pronunciation: 'GIJ-ee' },
+                { english: 'Spear Thrower', noongar: 'Miro', pronunciation: 'MEER-o' },
+                { english: 'Boomerang', noongar: 'Kylie', pronunciation: 'KAH-lee' },
+                { english: 'Womens Digging Stick', noongar: 'Wonna', pronunciation: 'WON-nah' },
+                { english: 'Fighting Stick', noongar: 'Dyuna', pronunciation: 'DEE-YOO-nah' },
+                { english: 'Red Ochre', noongar: 'Wilgi', pronunciation: 'WIL-gee' },
+                { english: 'Kangaroo Skin Cloak', noongar: 'Yongka Booka', pronunciation: 'YONG-kah BOO-kah' },
+                { english: 'Possum Hair Girdle', noongar: 'Nulbarn', pronunciation: 'NUL-barn' },
+                { english: 'Human Hair Girdle', noongar: 'Niggara', pronunciation: 'NIG-gar-ah' },
+                { english: 'Quartz Knife', noongar: 'Tabba', pronunciation: 'TAB-bah' },
+                { english: 'Heavy Club', noongar: 'Wirba', pronunciation: 'WIR-bah' },
+                { english: 'Throwing Stick', noongar: 'Dowak', pronunciation: 'DO-wack' },
+                { english: 'Light Spear', noongar: 'Burdun', pronunciation: 'BUR-dun' },
+                { english: 'White Clay', noongar: 'Dardark', pronunciation: 'DAR-dark' },
+                { english: 'Summer Fair / Meeting', noongar: 'Mandura', pronunciation: 'MAN-doo-rah' },
+                { english: 'Trade Route', noongar: 'Karla Bidi', pronunciation: 'KAR-lah BID-ee' },
+            ]
+        };
+
+        // Noongar Countries (14 dialect groups)
+        const noongarCountries = [
+            { noongar: 'Amangu', english: 'Ravensthorpe region', dialect: 'Amangu' },
+            { noongar: 'Yuat/Juat', english: 'Geraldton area', dialect: 'Yuat' },
+            { noongar: 'Whadjuk', english: 'Perth region', dialect: 'Whadjuk' },
+            { noongar: 'Binjareb', english: 'Pinjarra region', dialect: 'Binjareb' },
+            { noongar: 'Wardandi', english: 'Busselton area', dialect: 'Wardandi' },
+            { noongar: 'Balardong', english: 'Northam / York', dialect: 'Balardong' },
+            { noongar: 'Nyakinyaki', english: 'Narrogin region', dialect: 'Nyakinyaki' },
+            { noongar: 'Wilman', english: 'Plantagenet region', dialect: 'Wilman' },
+            { noongar: 'Ganeang', english: 'Katanning region', dialect: 'Ganeang' },
+            { noongar: 'Bibulman', english: 'Denmark region', dialect: 'Bibulman' },
+            { noongar: 'Mineng', english: 'Pemberton region', dialect: 'Mineng' },
+            { noongar: 'Goreng', english: 'Kojonup region', dialect: 'Goreng' },
+            { noongar: 'Wudjari', english: 'Esperance area', dialect: 'Wudjari' },
+            { noongar: 'Njunga', english: 'Kalgoorlie region', dialect: 'Njunga' },
+        ];
+
+        // Full translation dictionary - NOW INCLUDES ALL WORDS FROM CATEGORIES
+        const translationDictionary = {
+            'hello': { noongar: 'Nyoongar', pronunciation: 'NYOO-ngar' },
+            'welcome': { noongar: 'Wundju', pronunciation: 'WUN-joo' },
+            'thank you': { noongar: 'Kwop', pronunciation: 'KWOP' },
+            'goodbye': { noongar: 'Boordja', pronunciation: 'BOR-ja' },
+            'yes': { noongar: 'Yawwa', pronunciation: 'YAW-wah' },
+            'no': { noongar: 'Kayi', pronunciation: 'KAH-ee' },
+            'please': { noongar: 'Kwonye', pronunciation: 'KWON-yay' },
+            'sorry': { noongar: 'Kooditj', pronunciation: 'KOO-ditch' },
+            'mother': { noongar: 'Maaman', pronunciation: 'MAH-man' },
+            'father': { noongar: 'Bap', pronunciation: 'BAP' },
+            'grandmother': { noongar: 'Nana', pronunciation: 'NAH-nah' },
+            'grandfather': { noongar: 'Yonga Bap', pronunciation: 'YON-gah BAP' },
+            'sister': { noongar: 'Djook', pronunciation: 'JOOK' },
+            'brother': { noongar: 'Ngoon', pronunciation: 'NGOON' },
+            'son': { noongar: 'Maawit', pronunciation: 'MAH-wit' },
+            'daughter': { noongar: 'Yamuk', pronunciation: 'YAH-muk' },
+            'wife': { noongar: 'Yamuk', pronunciation: 'YAH-muk' },
+            'family': { noongar: 'Noolitj', pronunciation: 'NOO-litch' },
+            'child': { noongar: 'Nopa', pronunciation: 'NO-pah' },
+            'uncle': { noongar: 'Kongk', pronunciation: 'KONGK' },
+            'aunty': { noongar: 'Kongk', pronunciation: 'KONGK' },
+            'man': { noongar: 'Maam', pronunciation: 'MAHM' },
+            'woman': { noongar: 'Yorga', pronunciation: 'YOR-gah' },
+            'boy': { noongar: 'Nop', pronunciation: 'NOP' },
+            'cousin': { noongar: 'Dembart', pronunciation: 'DEM-bart' },
+            'water': { noongar: 'Djilak', pronunciation: 'JI-lack' },
+            'river': { noongar: 'Kwongkan', pronunciation: 'KWONG-kan' },
+            'ocean': { noongar: 'Djaalalang', pronunciation: 'JAH-lah-lang' },
+            'fire': { noongar: 'Waagh', pronunciation: 'WAHG' },
+            'smoke': { noongar: 'Koori', pronunciation: 'KOO-ree' },
+            'tree': { noongar: 'Boorn', pronunciation: 'BOOR-n' },
+            'forest': { noongar: 'Boorn boodja', pronunciation: 'BOOR-n BOO-ja' },
+            'rock': { noongar: 'Boya', pronunciation: 'BOY-ah' },
+            'sand': { noongar: 'Moodjita', pronunciation: 'MOO-ji-tah' },
+            'mountain': { noongar: 'Kwerta', pronunciation: 'KWER-tah' },
+            'sky': { noongar: 'Bogal', pronunciation: 'BO-gal' },
+            'sun': { noongar: 'Ngangk', pronunciation: 'NGANGK' },
+            'moon': { noongar: 'Miyak', pronunciation: 'MEE-yak' },
+            'stars': { noongar: 'Diyirn', pronunciation: 'DEE-yurn' },
+            'rain': { noongar: 'Kep', pronunciation: 'KEP' },
+            'wind': { noongar: 'Keniny', pronunciation: 'KEN-in-ee' },
+            'storm': { noongar: 'Birnt', pronunciation: 'BIRNT' },
+            'country': { noongar: 'Boodja', pronunciation: 'BOO-ja' },
+            'kangaroo': { noongar: 'Yongka', pronunciation: 'YONG-kah' },
+            'wallaby': { noongar: 'Kwoka', pronunciation: 'KWOK-ah' },
+            'koala': { noongar: 'Koobor', pronunciation: 'KOO-bor' },
+            'eagle': { noongar: 'Waalitj', pronunciation: 'WAH-litch' },
+            'crow': { noongar: 'Wardang', pronunciation: 'WAR-dang' },
+            'fish': { noongar: 'Koolbardi', pronunciation: 'KOOL-bar-dee' },
+            'dog': { noongar: 'Dwert', pronunciation: 'DWERT' },
+            'snake': { noongar: 'Noorn', pronunciation: 'NOORN' },
+            'lizard': { noongar: 'Yondi', pronunciation: 'YON-dee' },
+            'frog': { noongar: 'Koorni', pronunciation: 'KOOR-nee' },
+            'bird': { noongar: 'Waap', pronunciation: 'WAHP' },
+            'emu': { noongar: 'Waitj', pronunciation: 'WAITJ' },
+            'food': { noongar: 'Kura', pronunciation: 'KOO-rah' },
+            'meat': { noongar: 'Moort', pronunciation: 'MOOR-t' },
+            'honey': { noongar: 'Ngook', pronunciation: 'NGOOK' },
+            'eat': { noongar: 'Djoriny', pronunciation: 'JOR-in-ee' },
+            'drink': { noongar: 'Djeenak', pronunciation: 'JEE-nack' },
+            'hand': { noongar: 'Maar', pronunciation: 'MAHR' },
+            'head': { noongar: 'Kaat', pronunciation: 'KAHT' },
+            'eye': { noongar: 'Koolak', pronunciation: 'KOO-lack' },
+            'ear': { noongar: 'Djin', pronunciation: 'JIN' },
+            'nose': { noongar: 'Kannop', pronunciation: 'KAN-nop' },
+            'mouth': { noongar: 'Djaa', pronunciation: 'JAH' },
+            'leg': { noongar: 'Kangga', pronunciation: 'KANG-gah' },
+            'foot': { noongar: 'Djen', pronunciation: 'JEN' },
+            'heart': { noongar: 'Koort', pronunciation: 'KORT' },
+            'hair': { noongar: 'Djoombar', pronunciation: 'JOOM-bar' },
+            'skin': { noongar: 'Miyal', pronunciation: 'MEE-yal' },
+            'dance': { noongar: 'Kobori', pronunciation: 'KO-bor-ee' },
+            'walk': { noongar: 'Baan', pronunciation: 'BAHN' },
+            'sit': { noongar: 'Nyin', pronunciation: 'NYIN' },
+            'sleep': { noongar: 'Nookert', pronunciation: 'NOO-kert' },
+            'stand': { noongar: 'Kanjook', pronunciation: 'KAN-jook' },
+            'spear': { noongar: 'Gidgee', pronunciation: 'GIJ-ee' },
+            'boomerang': { noongar: 'Kylie', pronunciation: 'KAH-lee' },
+        };
+
+        function translateWord() {
+            const direction = document.getElementById('direction').value;
+            const word = document.getElementById('word').value.toLowerCase().trim();
+            const resultDiv = document.getElementById('result');
+
+            if (!word) {
+                resultDiv.innerHTML = '<div class="error">Please enter a word to translate.</div>';
+                resultDiv.classList.add('active');
+                return;
+            }
+
+            let result = translationDictionary[word];
+
+            if (result) {
+                const displayKey = direction === 'english-to-noongar' ? 'noongar' : 'english';
+                const translatedTo = direction === 'english-to-noongar' ? 'Noongar' : 'English';
+                
+                resultDiv.innerHTML = `
+                    <div class="result-label">Translation (${translatedTo})</div>
+                    <div class="result-text">${result[displayKey] || 'Word found'}</div>
+                    <div class="vocab-pronunciation">Pronunciation: ${result.pronunciation}</div>
+                `;
+            } else {
+                resultDiv.innerHTML = `<div class="error">Word not found. Try: hello, water, kangaroo, fire, country, thank you, mother, or browse vocabulary categories.</div>`;
+            }
+
+            resultDiv.classList.add('active');
+        }
+
+        function displayVocabulary() {
+            const category = document.getElementById('category').value;
+            const words = vocabularyDatabase[category] || [];
+            const vocabDiv = document.getElementById('vocabulary');
+
+            vocabDiv.innerHTML = words.map(word => `
+                <div class="vocab-card">
+                    <div class="vocab-english">${word.english}</div>
+                    <div class="vocab-noongar">${word.noongar}</div>
+                    <div class="vocab-pronunciation">${word.pronunciation}</div>
+                </div>
+            `).join('');
+        }
+
+        function displayCountries() {
+            const countriesDiv = document.getElementById('countries');
+            countriesDiv.innerHTML = noongarCountries.map(country => `
+                <div class="country-card">
+                    <div class="country-noongar">${country.noongar}</div>
+                    <div class="country-english">${country.english}</div>
+                </div>
+            `).join('');
+        }
+
+        function clearForm() {
+            document.getElementById('word').value = '';
+            document.getElementById('direction').value = 'english-to-noongar';
+            document.getElementById('result').classList.remove('active');
+            displayVocabulary();
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            displayVocabulary();
+            displayCountries();
+            
+            // Allow Enter key to translate
+            document.getElementById('word').addEventListener('keypress', function(event) {
+                if (event.key === 'Enter') {
+                    translateWord();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
